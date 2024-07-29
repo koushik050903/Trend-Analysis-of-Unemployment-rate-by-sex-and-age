@@ -15,8 +15,8 @@ This dataset contains unemployment rate data for various countries, broken down 
 * Age Categories (age_categories): Additional age categorizations are provided, like "Youth."
 * Yearly Data (2014-2024): Unemployment rates are recorded for each year from 2014 to 2024.
 
-# sex vs 2015
-![Screenshot 2024-07-29 142447](https://github.com/user-attachments/assets/d0235c3e-7027-43a7-a273-dc4a5a91be8a)
+# Visualize the correlations using a heatmap
+![Screenshot 2024-07-29 150126](https://github.com/user-attachments/assets/895e2228-30c9-43d6-b85f-8ff00b9fb532)
 
 # Unemployment Trends in India: A Closer Look
 ![Screenshot 2024-07-29 151226](https://github.com/user-attachments/assets/ce2f89e3-261a-4915-af70-f89c227c766c)
