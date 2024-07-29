@@ -45,6 +45,8 @@ Portfolio Diversification:
 ### Risk Assessment:
 * Correlations help assess risk exposure across different time periods.
 
+
+
 # Unemployment Trends in India: A Closer Look
 ![Screenshot 2024-07-29 151226](https://github.com/user-attachments/assets/ce2f89e3-261a-4915-af70-f89c227c766c)
 
@@ -71,6 +73,24 @@ Sustainable Development Goals (SDGs):
 * The United Nations’ SDGs emphasize decent work and economic growth (Goal 8). India’s efforts to reduce unemployment align with this goal.
 * By promoting inclusive growth, investing in education, and creating an enabling environment for businesses, India can contribute to achieving SDGs.
 
+# Forecasting Unemployment Rate for India(Female, 15-24 Youth)
+![Screenshot 2024-07-29 153612](https://github.com/user-attachments/assets/511b1dab-b3d2-44b4-bd1a-2d62b41e7200)
+
+### Historical Data (Observed):
+* The blue dots represent the observed unemployment rate data points from around 2014 to just before 2022.
+* These data points show the actual unemployment rates for females aged 15-24 in India during that period.
+### Forecast (Red Line):
+* The red line represents the forecasted trend for the unemployment rate.
+* It extends from just before 2022 to 2028.
+* The forecast suggests a general downward trend in the unemployment rate over time.
+### Confidence Interval (Pink Area):
+* The shaded pink area around the forecasted line represents the confidence interval.
+* Within this interval, there is some uncertainty in the prediction.
+* It provides a range within which the actual unemployment rate is likely to fall.
+### Key Takeaways:
+* India’s efforts to reduce youth unemployment align with sustainable development goals.
+* Skill development programs and entrepreneurship initiatives are crucial for creating job opportunities.
+* Gender-specific barriers need to be addressed for inclusive growth.
 # Conclusion
 ### Trend Analysis
 * The trend analysis across various countries reveals several key insights:
