@@ -1,0 +1,336 @@
+# Mount Google Drive to access files stored there
+from google.colab import drive
+drive.mount('/content/drive')
+
+# Install the Prophet package for time series forecasting
+!pip install prophet
+
+# Import necessary libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Define the file path to the CSV file
+file_path = '/content/drive/My Drive/global_unemployment_data.csv'
+
+# Read the CSV file into a DataFrame
+df = pd.read_csv(file_path)
+
+# Display the first few rows of the DataFrame
+df.head()
+
+# Visualize the distribution of unemployment rates for different sexes in 2015 using a violin plot
+figsize = (12, 1.2 * len(df['sex'].unique()))  # Set the figure size based on the number of unique sexes
+plt.figure(figsize=figsize)
+sns.violinplot(df, x='2015', y='sex', inner='box', palette='Dark2')  # Create the violin plot
+sns.despine(top=True, right=True, bottom=True, left=True)  # Remove the top, right, bottom, and left spines
+
+# Create an interactive sheet with the DataFrame (for use in Google Colab)
+from google.colab import sheets
+sheet = sheets.InteractiveSheet(df=df)
+
+# Visualize the distribution of unemployment rates by age categories in 2014 using a violin plot
+figsize = (12, 1.2 * len(df['age_categories'].unique()))  # Set the figure size based on the number of unique age categories
+plt.figure(figsize=figsize)
+sns.violinplot(df, x='2014', y='age_categories', inner='box', palette='Dark2')  # Create the violin plot
+sns.despine(top=True, right=True, bottom=True, left=True)  # Remove the top, right, bottom, and left spines
+
+# Generate a heatmap to show the distribution of age categories across different age groups
+plt.subplots(figsize=(8, 8))  # Set the figure size
+df_2dhist = pd.DataFrame({
+    x_label: grp['age_categories'].value_counts()  # Count the occurrences of age categories for each age group
+    for x_label, grp in df.groupby('age_group')
+})
+sns.heatmap(df_2dhist, cmap='viridis')  # Create the heatmap
+plt.xlabel('age_group')  # Label for the x-axis
+_ = plt.ylabel('age_categories')  # Label for the y-axis
+
+# Generate a heatmap to show the distribution of age groups across different sexes
+plt.subplots(figsize=(8, 8))  # Set the figure size
+df_2dhist = pd.DataFrame({
+    x_label: grp['age_group'].value_counts()  # Count the occurrences of age groups for each sex
+    for x_label, grp in df.groupby('sex')
+})
+sns.heatmap(df_2dhist, cmap='viridis')  # Create the heatmap
+plt.xlabel('sex')  # Label for the x-axis
+_ = plt.ylabel('age_group')  # Label for the y-axis
+
+# Create a horizontal bar plot showing the distribution of sexes
+df.groupby('sex').size().plot(kind='barh', color=sns.palettes.mpl_palette('Dark2'))  # Plot the bar chart
+plt.gca().spines[['top', 'right']].set_visible(False)  # Hide the top and right spines
+
+# Plot a histogram of unemployment rates for the year 2014
+df['2014'].plot(kind='hist', bins=20, title='2014')  # Create the histogram
+plt.gca().spines[['top', 'right']].set_visible(False)  # Hide the top and right spines
+
+# Plot a line graph of unemployment rates for the year 2017
+df['2017'].plot(kind='line', figsize=(8, 4), title='2017')  # Create the line plot
+plt.gca().spines[['top', 'right']].set_visible(False)  # Hide the top and right spines
+
+# Calculate and visualize the correlation matrix for year columns
+# Define the list of year columns
+year_columns = ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024']
+
+# Calculate the correlation matrix for the specified year columns
+correlation_matrix = df[year_columns].corr()
+
+# Plot the correlation matrix using a heatmap
+plt.figure(figsize=(12, 8))  # Set the figure size
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=0.5)  # Create the heatmap with annotations
+plt.title('Correlation Matrix of Year Columns')  # Set the title of the heatmap
+plt.show()  # Display the heatmap
+
+# Print descriptive statistics of the dataset
+desc_stats = df.describe()  # Calculate descriptive statistics
+print(desc_stats)  # Print the statistics
+
+# Analyze the trend of unemployment rate for a specific country and demographic group
+# Define specific values for filtering
+country = 'India'
+indicator = 'Unemployment rate by sex and age'
+sex = 'Female'
+age_group = '15-24'
+age_category = 'Youth'
+
+# Filter the data for the specified group
+filtered_df = df[(df['country_name'] == country) &
+                 (df['indicator_name'] == indicator) &
+                 (df['sex'] == sex) &
+                 (df['age_group'] == age_group) &
+                 (df['age_categories'] == age_category)]
+
+# Check if filtered data is available
+if filtered_df.empty:
+    print(f"No data available for {country}, {indicator}, {sex}, {age_group}, {age_category}")
+else:
+    # Aggregate data if multiple rows match (using mean here)
+    trend_data = filtered_df[year_columns].mean()
+
+    # Plot the trend of unemployment rate over the years
+    plt.figure(figsize=(12, 6))  # Set the figure size
+    plt.plot(year_columns, trend_data, marker='o')  # Plot the trend data
+    plt.title(f'Trend Analysis for {country} - {indicator} ({sex}, {age_group} {age_category})')  # Set the title
+    plt.xlabel('Year')  # Label for the x-axis
+    plt.ylabel('Unemployment Rate')  # Label for the y-axis
+    plt.grid(True)  # Add grid lines
+    plt.show()  # Display the plot
+# Define the categories for comparison (Female and Male)
+sexes = ['Female', 'Male']
+
+# Create a new figure with specified size for the plot
+plt.figure(figsize=(12, 6))
+
+# Loop through each sex category to plot their trends
+for sex in sexes:
+    # Filter the DataFrame to include only the current sex, country, indicator, age group, and age category
+    group_df = df[(df['country_name'] == country) &
+                  (df['indicator_name'] == indicator) &
+                  (df['sex'] == sex) &
+                  (df['age_group'] == age_group) &
+                  (df['age_categories'] == age_category)]
+    
+    # Check if the filtered DataFrame is not empty
+    if not group_df.empty:
+        # Compute the mean unemployment rate across years for the current group
+        group_trend_data = group_df[year_columns].mean()
+        # Plot the trend data for the current sex category with markers
+        plt.plot(year_columns, group_trend_data, marker='o', label=sex)
+
+# Set the title of the plot with dynamic values for country, indicator, age group, and age category
+plt.title(f'Comparative Trend Analysis for {country} - {indicator} ({age_group} {age_category})')
+
+# Set the label for the x-axis
+plt.xlabel('Year')
+
+# Set the label for the y-axis
+plt.ylabel('Unemployment Rate')
+
+# Add a legend to the plot with title 'Sex'
+plt.legend(title='Sex')
+
+# Add a grid to the plot for better readability
+plt.grid(True)
+
+# Display the plot
+plt.show()
+
+# Define the rolling window size (3 years in this case)
+rolling_window = 3  # 3-year rolling window
+
+# Calculate the rolling mean of the trend data using the defined window size
+rolling_mean = trend_data.rolling(window=rolling_window).mean()
+
+# Calculate the rolling standard deviation of the trend data using the defined window size
+rolling_std = trend_data.rolling(window=rolling_window).std()
+
+# Create a new figure with specified size for the plot
+plt.figure(figsize=(12, 6))
+
+# Plot the original trend data with markers
+plt.plot(year_columns, trend_data, marker='o', label='Original')
+
+# Plot the rolling mean data with markers
+plt.plot(year_columns, rolling_mean, marker='o', label=f'{rolling_window}-year Rolling Mean')
+
+# Plot the rolling standard deviation as a shaded area around the rolling mean
+plt.fill_between(year_columns, rolling_mean - rolling_std, rolling_mean + rolling_std, color='gray', alpha=0.2, label='Rolling Std Dev')
+
+# Set the title of the plot with dynamic values for country, indicator, sex, age group, and age category
+plt.title(f'Rolling Mean and Std Dev for {country} - {indicator} ({sex}, {age_group} {age_category})')
+
+# Set the label for the x-axis
+plt.xlabel('Year')
+
+# Set the label for the y-axis
+plt.ylabel('Unemployment Rate')
+
+# Add a legend to the plot
+plt.legend()
+
+# Add a grid to the plot for better readability
+plt.grid(True)
+
+# Display the plot
+plt.show()
+
+import statsmodels.api as sm
+
+# Decompose the time series
+trend_data_ts = trend_data.reset_index(drop=True)
+trend_data_ts.index = pd.date_range(start='2014', periods=len(trend_data), freq='Y')
+
+decomposition = sm.tsa.seasonal_decompose(trend_data_ts, model='additive')
+decomposition.plot()
+plt.show()
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from prophet import Prophet
+
+# Define year columns
+year_columns = ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024']
+
+# Specific values
+country = 'India'
+indicator = 'Unemployment rate by sex and age'
+sex = 'Female'
+age_group = '15-24'
+age_category = 'Youth'
+
+# Filter the data for the specific group
+filtered_df = df[(df['country_name'] == country) &
+                 (df['indicator_name'] == indicator) &
+                 (df['sex'] == sex) &
+                 (df['age_group'] == age_group) &
+                 (df['age_categories'] == age_category)]
+
+# Check if any data is available for the filtered group
+if filtered_df.empty:
+    print(f"No data available for {country}, {indicator}, {sex}, {age_group}, {age_category}")
+else:
+    # If multiple rows match, aggregate them (mean or sum can be used)
+    # Here, we use mean to average the values if there are multiple rows
+    trend_data = filtered_df[year_columns].mean().reset_index()
+    trend_data.columns = ['ds', 'y']
+    trend_data['ds'] = pd.to_datetime(trend_data['ds'], format='%Y')
+
+    # Initialize and fit the Prophet model
+    model = Prophet()
+    model.fit(trend_data)
+
+    # Create a DataFrame for future dates
+    future = model.make_future_dataframe(periods=5, freq='Y')
+    forecast = model.predict(future)
+
+    # Plot the forecast
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    # Plot historical data
+    ax.plot(trend_data['ds'], trend_data['y'], 'o', label='Observed')
+
+    # Plot forecast data
+    ax.plot(forecast['ds'], forecast['yhat'], 'r-', label='Forecast')
+
+    # Plot confidence intervals
+    ax.fill_between(forecast['ds'], forecast['yhat_lower'], forecast['yhat_upper'], color='pink', alpha=0.5, label='Confidence Interval')
+
+    # Add title and labels
+    ax.set_title(f'Forecasting Unemployment Rate for {country} ({sex}, {age_group} {age_category})')
+    ax.set_xlabel('Year')
+    ax.set_ylabel('Unemployment Rate')
+    ax.legend()
+
+    plt.grid(True)
+    plt.show()
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from prophet import Prophet
+
+
+file_path = '/content/drive/My Drive/global_unemployment_data.csv'
+
+# Load the dataset
+df = pd.read_csv(file_path)
+
+# Define year columns
+year_columns = ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024']
+
+# List of countries in the dataset
+countries = df['country_name'].unique()
+
+# Plot size settings
+fig_width = 10
+fig_height = 5
+
+# Forecast for each country
+for country in countries:
+    print(f"Processing {country}...")
+
+    # Filter the data for the current country
+    filtered_df = df[(df['country_name'] == country) &
+                     (df['indicator_name'] == 'Unemployment rate by sex and age') &
+                     (df['sex'] == 'Female') &
+                     (df['age_group'] == '15-24') &
+                     (df['age_categories'] == 'Youth')]
+
+    # Check if any data is available for the filtered group
+    if filtered_df.empty:
+        print(f"No data available for {country}")
+        continue
+
+    # If multiple rows match, aggregate them (mean or sum can be used)
+    # Here, we use mean to average the values if there are multiple rows
+    trend_data = filtered_df[year_columns].mean().reset_index()
+    trend_data.columns = ['ds', 'y']
+    trend_data['ds'] = pd.to_datetime(trend_data['ds'], format='%Y')
+
+    # Initialize and fit the Prophet model
+    model = Prophet()
+    model.fit(trend_data)
+
+    # Create a DataFrame for future dates
+    future = model.make_future_dataframe(periods=5, freq='Y')
+    forecast = model.predict(future)
+
+    # Plot the trend and forecast
+    fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+
+    # Plot historical data
+    ax.plot(trend_data['ds'], trend_data['y'], 'o', label='Observed')
+
+    # Plot forecast data
+    ax.plot(forecast['ds'], forecast['yhat'], 'r-', label='Forecast')
+
+    # Plot confidence intervals
+    ax.fill_between(forecast['ds'], forecast['yhat_lower'], forecast['yhat_upper'], color='pink', alpha=0.5, label='Confidence Interval')
+
+    # Add title and labels
+    ax.set_title(f'Forecasting Unemployment Rate for {country} (Female, 15-24 Youth)')
+    ax.set_xlabel('Year')
+    ax.set_ylabel('Unemployment Rate')
+    ax.legend()
+
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
