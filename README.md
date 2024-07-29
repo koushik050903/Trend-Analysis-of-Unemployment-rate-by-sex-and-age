@@ -1,6 +1,10 @@
 # Trend-Analysis-of-Unemployment-rate-by-sex-and-age
 
 # Dataset
+https://docs.google.com/spreadsheets/d/1WCdJMdTLT4apMWWyKE-Hywuud0KQoMFAx936Wm-_fTk/edit?gid=0#gid=0
+
+![Screenshot 2024-07-29 151119](https://github.com/user-attachments/assets/4a9c5758-c4f3-430c-8700-d86df0ed7fa8)
+
 This dataset contains unemployment rate data for various countries, broken down by sex, age group, and age categories over a period from 2014 to 2024. The following sections provide an overview of the dataset, including the key dimensions, summary statistics, and notable trends observed across different countries.
 
 ### Dataset Description
